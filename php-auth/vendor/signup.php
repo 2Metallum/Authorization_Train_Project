@@ -18,10 +18,16 @@
 
         $password = md5($password);
 
-        mysqli_query($connect, "INSERT INTO `users` 
-                                            (`id`, `name`, `surname`, `avatar`, `login`, `email`, `password`) 
+        $stmt = mysqli_prepare($connect, "INSERT INTO `users` 
+                                            (`name`, `surname`, `avatar`, `login`, `email`, `password`) 
                                        VALUES 
-                                            (NULL, '$name', '$surname', '$path', '$login', '$email', '$password')");
+                                            (?, ?, ?, ?, ?, ?)");
+        mysqli_stmt_bind_param($stmt, "ssssss", $name, $surname, $path, $login, $email, $password);
+        mysqli_stmt_execute($stmt);
+
+        mysqli_stmt_close($stmt);
+        mysqli_close($connect);
+
         $_SESSION['message'] = 'Регистрация прошла успешно';
         header('Location: ../index.php');
     } else {
